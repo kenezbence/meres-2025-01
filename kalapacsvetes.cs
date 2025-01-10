@@ -40,11 +40,11 @@ class Program
     {
         List<Sportolo> sportolok = new List<Sportolo>();
 
-        // 1. Read the file and populate the list
+        
         try
         {
             var lines = File.ReadAllLines("kalapacsvetes.txt");
-            for (int i = 1; i < lines.Length; i++) // Skip header
+            for (int i = 1; i < lines.Length; i++) 
             {
                 var parts = lines[i].Split(';');
                 int helyezes = int.Parse(parts[0]);
@@ -61,3 +61,42 @@ class Program
             Console.WriteLine("Hiba a fájl beolvasása során: " + ex.Message);
             return;
         }
+
+    
+        Console.WriteLine($"4. Összes dobások száma: {sportolok.Count}");
+
+        
+        var magyarSportolok = sportolok.Where(s => s.OrszagKod == "HUN").ToList();
+        if (magyarSportolok.Count > 0)
+        {
+            double atlag = magyarSportolok.Average(s => s.Eredmeny);
+            Console.WriteLine($"5. Magyar sportolók átlageredménye: {atlag:F2}");
+        }
+        else
+        {
+            Console.WriteLine("5. Nincs magyar sportoló a listában.");
+        }
+
+        
+        Console.Write("6. Kérem, adjon meg egy évet: ");
+        if (int.TryParse(Console.ReadLine(), out int ev))
+        {
+            var evSportolok = sportolok.Where(s => s.GetYear() == ev).ToList();
+            if (evSportolok.Count > 0)
+            {
+                Console.WriteLine($"6. Az adott évben {evSportolok.Count} dobás került be a legjobbak közé:");
+                foreach (var sportolo in evSportolok)
+                {
+                    Console.WriteLine($"{sportolo.Helyezes}. helyezett, {sportolo.Nev}, eredmény: {sportolo.Eredmeny:F2} m, helyszín: {sportolo.Helyszin}, dátum: {sportolo.Datum}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("6. Az adott évben nem került be egy dobás eredménye sem a legjobbak közé.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("6. Érvénytelen év.");
+        }
+
