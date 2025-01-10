@@ -99,4 +99,27 @@ class Program
         {
             Console.WriteLine("6. Érvénytelen év.");
         }
+        var orszagStatisztika = sportolok
+            .GroupBy(s => s.OrszagKod)
+            .Select(g => new { OrszagKod = g.Key, Darabszam = g.Count() })
+            .OrderByDescending(o => o.Darabszam)
+            .ThenBy(o => o.OrszagKod);
+
+        Console.WriteLine("\n7. Ország statisztika:");
+        foreach (var stat in orszagStatisztika)
+        {
+            Console.WriteLine($"{stat.OrszagKod}: {stat.Darabszam} dobás");
+        }
+        try
+        {
+            var magyarokFajl = "magyarok.txt";
+            File.WriteAllLines(magyarokFajl, magyarSportolok.Select(s => s.ToString()), System.Text.Encoding.UTF8);
+            Console.WriteLine("\n8. A magyar sportolók adatai sikeresen elmentve a magyarok.txt fájlba.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"8. Hiba a magyarok.txt fájl írása során: {ex.Message}");
+        }
+    }
+}
 
